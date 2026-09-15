@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
-function Icon({ name, className }: { name: string; className?: string }) {
-  const C = (Icons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[name];
+function Icon({ name, className }: { name: string; className: string }) {
+  const C = (Icons as unknown as Record<string, React.ComponentType<{ className: string }>>)[name];
   return C ? <C className={className} /> : null;
 }
 
