@@ -44,7 +44,7 @@ function CalendarPage() {
     mutationFn: async () => {
       const { error } = await supabase.from("calendar_events").insert({
         title: form.title, event_type: form.event_type as never, starts_on: form.starts_on,
-        location: form.location || null, audience: ["staff"],
+        location: form.location || null, audience: ["administrator", "principal", "teacher", "front_office", "librarian"],
       });
       if (error) throw error;
     },
