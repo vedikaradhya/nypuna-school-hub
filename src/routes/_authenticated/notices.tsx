@@ -41,7 +41,7 @@ function Notices() {
 
   const create = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("announcements").insert({ title: form.title, body: form.body, audience: ["staff"] });
+      const { error } = await supabase.from("announcements").insert({ title: form.title, body: form.body, audience: ["administrator", "principal", "teacher", "front_office", "librarian"] });
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Notice posted"); setOpen(false); setForm({ title: "", body: "" }); void qc.invalidateQueries({ queryKey: ["notices"] }); },
