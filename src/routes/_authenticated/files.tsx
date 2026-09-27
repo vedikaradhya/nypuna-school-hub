@@ -66,7 +66,7 @@ function Files() {
 
   const open = async (path: string) => {
     const { data, error } = await supabase.storage.from("school-files").createSignedUrl(path, 300);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     window.open(data.signedUrl, "_blank", "noopener");
   };
 
