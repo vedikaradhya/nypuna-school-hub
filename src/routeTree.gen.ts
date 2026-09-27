@@ -14,16 +14,22 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAcademicsRouteImport } from './routes/_authenticated/academics'
 import { Route as AuthenticatedAdmissionsRouteImport } from './routes/_authenticated/admissions'
+import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
 import { Route as AuthenticatedAssignmentsRouteImport } from './routes/_authenticated/assignments'
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
+import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
 import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticated/calendar'
 import { Route as AuthenticatedCouncilRouteImport } from './routes/_authenticated/council'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedExamsRouteImport } from './routes/_authenticated/exams'
+import { Route as AuthenticatedFilesRouteImport } from './routes/_authenticated/files'
 import { Route as AuthenticatedHousesRouteImport } from './routes/_authenticated/houses'
 import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
 import { Route as AuthenticatedNoticesRouteImport } from './routes/_authenticated/notices'
+import { Route as AuthenticatedReportCardsRouteImport } from './routes/_authenticated/report-cards'
+import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedStudentsRouteImport } from './routes/_authenticated/students'
+import { Route as AuthenticatedTeacherToolsRouteImport } from './routes/_authenticated/teacher-tools'
 import { Route as AuthenticatedTimetableRouteImport } from './routes/_authenticated/timetable'
 import { Route as AuthenticatedVisitorsRouteImport } from './routes/_authenticated/visitors'
 
@@ -51,6 +57,11 @@ const AuthenticatedAdmissionsRoute = AuthenticatedAdmissionsRouteImport.update({
   path: '/admissions',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAnalyticsRoute = AuthenticatedAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAssignmentsRoute =
   AuthenticatedAssignmentsRouteImport.update({
     id: '/assignments',
@@ -60,6 +71,11 @@ const AuthenticatedAssignmentsRoute =
 const AuthenticatedAttendanceRoute = AuthenticatedAttendanceRouteImport.update({
   id: '/attendance',
   path: '/attendance',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCalendarRoute = AuthenticatedCalendarRouteImport.update({
@@ -82,6 +98,11 @@ const AuthenticatedExamsRoute = AuthenticatedExamsRouteImport.update({
   path: '/exams',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFilesRoute = AuthenticatedFilesRouteImport.update({
+  id: '/files',
+  path: '/files',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHousesRoute = AuthenticatedHousesRouteImport.update({
   id: '/houses',
   path: '/houses',
@@ -97,11 +118,28 @@ const AuthenticatedNoticesRoute = AuthenticatedNoticesRouteImport.update({
   path: '/notices',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedReportCardsRoute =
+  AuthenticatedReportCardsRouteImport.update({
+    id: '/report-cards',
+    path: '/report-cards',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedStaffRoute = AuthenticatedStaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedStudentsRoute = AuthenticatedStudentsRouteImport.update({
   id: '/students',
   path: '/students',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedTeacherToolsRoute =
+  AuthenticatedTeacherToolsRouteImport.update({
+    id: '/teacher-tools',
+    path: '/teacher-tools',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTimetableRoute = AuthenticatedTimetableRouteImport.update({
   id: '/timetable',
   path: '/timetable',
@@ -118,16 +156,22 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/academics': typeof AuthenticatedAcademicsRoute
   '/admissions': typeof AuthenticatedAdmissionsRoute
+  '/analytics': typeof AuthenticatedAnalyticsRoute
   '/assignments': typeof AuthenticatedAssignmentsRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
+  '/audit': typeof AuthenticatedAuditRoute
   '/calendar': typeof AuthenticatedCalendarRoute
   '/council': typeof AuthenticatedCouncilRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/exams': typeof AuthenticatedExamsRoute
+  '/files': typeof AuthenticatedFilesRoute
   '/houses': typeof AuthenticatedHousesRoute
   '/library': typeof AuthenticatedLibraryRoute
   '/notices': typeof AuthenticatedNoticesRoute
+  '/report-cards': typeof AuthenticatedReportCardsRoute
+  '/staff': typeof AuthenticatedStaffRoute
   '/students': typeof AuthenticatedStudentsRoute
+  '/teacher-tools': typeof AuthenticatedTeacherToolsRoute
   '/timetable': typeof AuthenticatedTimetableRoute
   '/visitors': typeof AuthenticatedVisitorsRoute
 }
@@ -136,16 +180,22 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/academics': typeof AuthenticatedAcademicsRoute
   '/admissions': typeof AuthenticatedAdmissionsRoute
+  '/analytics': typeof AuthenticatedAnalyticsRoute
   '/assignments': typeof AuthenticatedAssignmentsRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
+  '/audit': typeof AuthenticatedAuditRoute
   '/calendar': typeof AuthenticatedCalendarRoute
   '/council': typeof AuthenticatedCouncilRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/exams': typeof AuthenticatedExamsRoute
+  '/files': typeof AuthenticatedFilesRoute
   '/houses': typeof AuthenticatedHousesRoute
   '/library': typeof AuthenticatedLibraryRoute
   '/notices': typeof AuthenticatedNoticesRoute
+  '/report-cards': typeof AuthenticatedReportCardsRoute
+  '/staff': typeof AuthenticatedStaffRoute
   '/students': typeof AuthenticatedStudentsRoute
+  '/teacher-tools': typeof AuthenticatedTeacherToolsRoute
   '/timetable': typeof AuthenticatedTimetableRoute
   '/visitors': typeof AuthenticatedVisitorsRoute
 }
@@ -156,16 +206,22 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/academics': typeof AuthenticatedAcademicsRoute
   '/_authenticated/admissions': typeof AuthenticatedAdmissionsRoute
+  '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
   '/_authenticated/assignments': typeof AuthenticatedAssignmentsRoute
   '/_authenticated/attendance': typeof AuthenticatedAttendanceRoute
+  '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/calendar': typeof AuthenticatedCalendarRoute
   '/_authenticated/council': typeof AuthenticatedCouncilRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/exams': typeof AuthenticatedExamsRoute
+  '/_authenticated/files': typeof AuthenticatedFilesRoute
   '/_authenticated/houses': typeof AuthenticatedHousesRoute
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
   '/_authenticated/notices': typeof AuthenticatedNoticesRoute
+  '/_authenticated/report-cards': typeof AuthenticatedReportCardsRoute
+  '/_authenticated/staff': typeof AuthenticatedStaffRoute
   '/_authenticated/students': typeof AuthenticatedStudentsRoute
+  '/_authenticated/teacher-tools': typeof AuthenticatedTeacherToolsRoute
   '/_authenticated/timetable': typeof AuthenticatedTimetableRoute
   '/_authenticated/visitors': typeof AuthenticatedVisitorsRoute
 }
@@ -176,16 +232,22 @@ export interface FileRouteTypes {
     | '/auth'
     | '/academics'
     | '/admissions'
+    | '/analytics'
     | '/assignments'
     | '/attendance'
+    | '/audit'
     | '/calendar'
     | '/council'
     | '/dashboard'
     | '/exams'
+    | '/files'
     | '/houses'
     | '/library'
     | '/notices'
+    | '/report-cards'
+    | '/staff'
     | '/students'
+    | '/teacher-tools'
     | '/timetable'
     | '/visitors'
   fileRoutesByTo: FileRoutesByTo
@@ -194,16 +256,22 @@ export interface FileRouteTypes {
     | '/auth'
     | '/academics'
     | '/admissions'
+    | '/analytics'
     | '/assignments'
     | '/attendance'
+    | '/audit'
     | '/calendar'
     | '/council'
     | '/dashboard'
     | '/exams'
+    | '/files'
     | '/houses'
     | '/library'
     | '/notices'
+    | '/report-cards'
+    | '/staff'
     | '/students'
+    | '/teacher-tools'
     | '/timetable'
     | '/visitors'
   id:
@@ -213,16 +281,22 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/academics'
     | '/_authenticated/admissions'
+    | '/_authenticated/analytics'
     | '/_authenticated/assignments'
     | '/_authenticated/attendance'
+    | '/_authenticated/audit'
     | '/_authenticated/calendar'
     | '/_authenticated/council'
     | '/_authenticated/dashboard'
     | '/_authenticated/exams'
+    | '/_authenticated/files'
     | '/_authenticated/houses'
     | '/_authenticated/library'
     | '/_authenticated/notices'
+    | '/_authenticated/report-cards'
+    | '/_authenticated/staff'
     | '/_authenticated/students'
+    | '/_authenticated/teacher-tools'
     | '/_authenticated/timetable'
     | '/_authenticated/visitors'
   fileRoutesById: FileRoutesById
@@ -270,6 +344,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdmissionsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/analytics': {
+      id: '/_authenticated/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AuthenticatedAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/assignments': {
       id: '/_authenticated/assignments'
       path: '/assignments'
@@ -282,6 +363,13 @@ declare module '@tanstack/react-router' {
       path: '/attendance'
       fullPath: '/attendance'
       preLoaderRoute: typeof AuthenticatedAttendanceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/audit': {
+      id: '/_authenticated/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AuthenticatedAuditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/calendar': {
@@ -312,6 +400,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExamsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/files': {
+      id: '/_authenticated/files'
+      path: '/files'
+      fullPath: '/files'
+      preLoaderRoute: typeof AuthenticatedFilesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/houses': {
       id: '/_authenticated/houses'
       path: '/houses'
@@ -333,11 +428,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedNoticesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/report-cards': {
+      id: '/_authenticated/report-cards'
+      path: '/report-cards'
+      fullPath: '/report-cards'
+      preLoaderRoute: typeof AuthenticatedReportCardsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/staff': {
+      id: '/_authenticated/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof AuthenticatedStaffRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/students': {
       id: '/_authenticated/students'
       path: '/students'
       fullPath: '/students'
       preLoaderRoute: typeof AuthenticatedStudentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/teacher-tools': {
+      id: '/_authenticated/teacher-tools'
+      path: '/teacher-tools'
+      fullPath: '/teacher-tools'
+      preLoaderRoute: typeof AuthenticatedTeacherToolsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/timetable': {
@@ -360,16 +476,22 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAcademicsRoute: typeof AuthenticatedAcademicsRoute
   AuthenticatedAdmissionsRoute: typeof AuthenticatedAdmissionsRoute
+  AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRoute
   AuthenticatedAssignmentsRoute: typeof AuthenticatedAssignmentsRoute
   AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRoute
+  AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
   AuthenticatedCalendarRoute: typeof AuthenticatedCalendarRoute
   AuthenticatedCouncilRoute: typeof AuthenticatedCouncilRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExamsRoute: typeof AuthenticatedExamsRoute
+  AuthenticatedFilesRoute: typeof AuthenticatedFilesRoute
   AuthenticatedHousesRoute: typeof AuthenticatedHousesRoute
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
   AuthenticatedNoticesRoute: typeof AuthenticatedNoticesRoute
+  AuthenticatedReportCardsRoute: typeof AuthenticatedReportCardsRoute
+  AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
   AuthenticatedStudentsRoute: typeof AuthenticatedStudentsRoute
+  AuthenticatedTeacherToolsRoute: typeof AuthenticatedTeacherToolsRoute
   AuthenticatedTimetableRoute: typeof AuthenticatedTimetableRoute
   AuthenticatedVisitorsRoute: typeof AuthenticatedVisitorsRoute
 }
@@ -377,16 +499,22 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAcademicsRoute: AuthenticatedAcademicsRoute,
   AuthenticatedAdmissionsRoute: AuthenticatedAdmissionsRoute,
+  AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRoute,
   AuthenticatedAssignmentsRoute: AuthenticatedAssignmentsRoute,
   AuthenticatedAttendanceRoute: AuthenticatedAttendanceRoute,
+  AuthenticatedAuditRoute: AuthenticatedAuditRoute,
   AuthenticatedCalendarRoute: AuthenticatedCalendarRoute,
   AuthenticatedCouncilRoute: AuthenticatedCouncilRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExamsRoute: AuthenticatedExamsRoute,
+  AuthenticatedFilesRoute: AuthenticatedFilesRoute,
   AuthenticatedHousesRoute: AuthenticatedHousesRoute,
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
   AuthenticatedNoticesRoute: AuthenticatedNoticesRoute,
+  AuthenticatedReportCardsRoute: AuthenticatedReportCardsRoute,
+  AuthenticatedStaffRoute: AuthenticatedStaffRoute,
   AuthenticatedStudentsRoute: AuthenticatedStudentsRoute,
+  AuthenticatedTeacherToolsRoute: AuthenticatedTeacherToolsRoute,
   AuthenticatedTimetableRoute: AuthenticatedTimetableRoute,
   AuthenticatedVisitorsRoute: AuthenticatedVisitorsRoute,
 }
