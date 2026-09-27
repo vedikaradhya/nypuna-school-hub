@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { validateTimetable, type TTEntry } from "@/lib/timetable-validation";
 
 export const Route = createFileRoute("/_authenticated/timetable")({
   head: () => ({
@@ -24,13 +25,7 @@ export const Route = createFileRoute("/_authenticated/timetable")({
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-type Entry = {
-  id: string; day_of_week: number; section_id: string;
-  periods: { period_no: number; label: string; is_break: boolean } | null;
-  subjects: { name: string; code: string } | null;
-  profiles: { id: string; full_name: string; max_periods_per_week: number } | null;
-  classrooms: { name: string } | null;
-};
+type Entry = TTEntry;
 
 function Timetable() {
   const [sectionId, setSectionId] = useState<string>("");
@@ -57,7 +52,7 @@ function Timetable() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("timetable_entries")
-        .select("id, day_of_week, section_id, periods(period_no, label, is_break), subjects(name, code), profiles(id, full_name, max_periods_per_week), classrooms(name)");
+        .select("id, day_of_week, section_id, sections(name, grades(name)), periods(period_no, label, is_break), subjects(id, name, code, requires_lab), profiles(id, full_name, max_periods_per_week, max_periods_per_day), classrooms(id, name, room_type)");
       if (error) throw error;
       return data as unknown as Entry[];
     },
@@ -91,13 +86,50 @@ function Timetable() {
     return [...map.values()].sort((a, b) => b.count - a.count);
   }, [entries.data]);
 
+  const validation = useMemo(() => validateTimetable(entries.data ?? []), [entries.data]);
+  const hardCount = validation.filter((r) => r.severity === "hard").reduce((n, r) => n + r.findings.length, 0);
+  const softCount = validation.filter((r) => r.severity === "soft").reduce((n, r) => n + r.findings.length, 0);
+
   return (
     <Page path="/timetable" title="Timetable & Workload" subtitle="Weekly grid, clash detection and teacher load">
       <Tabs defaultValue="grid">
         <TabsList>
           <TabsTrigger value="grid">Timetable</TabsTrigger>
           <TabsTrigger value="workload">Teacher workload</TabsTrigger>
+          <TabsTrigger value="validation">Validation{hardCount ? ` (${hardCount})` : ""}</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="validation">
+          <div className={`mb-4 rounded-md border p-3 text-sm ${hardCount ? "border-destructive/40 bg-destructive/5 text-destructive" : "border-success/30 bg-success/5"}`}>
+            {hardCount
+              ? `${hardCount} critical conflict${hardCount > 1 ? "s" : ""} — publishing is blocked until resolved. ${softCount} warning${softCount === 1 ? "" : "s"}.`
+              : `All hard constraints pass — this timetable can be published. ${softCount} soft warning${softCount === 1 ? "" : "s"}.`}
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {validation.map((r) => (
+              <Card key={r.rule}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center justify-between font-display text-base">
+                    <span>{r.rule}</span>
+                    <span className="flex gap-2">
+                      <Badge variant="outline">{r.severity === "hard" ? "Hard" : "Soft"}</Badge>
+                      {r.findings.length
+                        ? <Badge variant={r.severity === "hard" ? "destructive" : "secondary"}>{r.findings.length} issue{r.findings.length > 1 ? "s" : ""}</Badge>
+                        : <Badge variant="secondary">Pass</Badge>}
+                    </span>
+                  </CardTitle>
+                  <p className="text-xs text-muted-foreground">{r.description}</p>
+                </CardHeader>
+                {r.findings.length ? (
+                  <CardContent>
+                    <ul className="list-disc space-y-1 pl-5 text-sm">{r.findings.slice(0, 8).map((f, i) => <li key={i}>{f.message}</li>)}</ul>
+                    {r.findings.length > 8 ? <p className="mt-2 text-xs text-muted-foreground">+{r.findings.length - 8} more</p> : null}
+                  </CardContent>
+                ) : null}
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
 
         <TabsContent value="grid">
           {clashes.length ? (
