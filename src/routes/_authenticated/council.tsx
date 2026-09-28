@@ -4,6 +4,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Page } from "@/components/Page";
 import { DataState } from "@/components/DataState";
+import { VotingBooth } from "@/components/VotingBooth";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -77,9 +78,12 @@ function Council() {
               <SelectContent>{elections.data?.map((e) => <SelectItem key={e.id} value={e.id}>{e.title}</SelectItem>)}</SelectContent>
             </Select>
             {elections.data?.filter((e) => e.id === active).map((e) => (
-              <p key={e.id} className="mt-3 text-sm text-muted-foreground">
-                {e.council_positions?.name ?? "General"} · <Badge variant="secondary">{e.status}</Badge>
-              </p>
+              <div key={e.id} className="mt-3 flex items-center justify-between gap-3">
+                <p className="text-sm text-muted-foreground">
+                  {e.council_positions?.name ?? "General"} · <Badge variant="secondary">{e.status}</Badge>
+                </p>
+                <VotingBooth electionId={e.id} open={e.status === "open"} />
+              </div>
             ))}
           </CardContent></Card>
 
