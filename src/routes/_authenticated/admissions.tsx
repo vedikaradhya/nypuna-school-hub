@@ -46,7 +46,7 @@ function Admissions() {
   const apps = useQuery({
     queryKey: ["applications"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("admission_applications").select("id, application_no, applicant_name, guardian_name, guardian_phone, stage, documents_verified, test_score, created_at").order("created_at", { ascending: false }).limit(100);
+      const { data, error } = await supabase.from("admission_applications").select("id, application_no, applicant_name, guardian_name, guardian_phone, stage, documents_verified, fee_verified, test_score, created_at").order("created_at", { ascending: false }).limit(100);
       if (error) throw error;
       return data;
     },
@@ -75,6 +75,15 @@ function Admissions() {
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Stage updated"); void qc.invalidateQueries({ queryKey: ["applications"] }); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const setFlag = useMutation({
+    mutationFn: async ({ id, patch }: { id: string; patch: { documents_verified?: boolean; fee_verified?: boolean } }) => {
+      const { error } = await supabase.from("admission_applications").update(patch).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ["applications"] }),
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -132,7 +141,10 @@ function Admissions() {
                         <TableCell className="font-mono text-xs">{a.application_no}</TableCell>
                         <TableCell className="font-medium">{a.applicant_name}</TableCell>
                         <TableCell className="text-sm text-muted-foreground">{a.guardian_name} · {a.guardian_phone}</TableCell>
-                        <TableCell>{a.documents_verified ? "Verified" : "Pending"}</TableCell>
+                        <TableCell className="space-y-1 text-xs">
+                          <label className="flex items-center gap-2"><input type="checkbox" checked={a.documents_verified} onChange={(e) => setFlag.mutate({ id: a.id, patch: { documents_verified: e.target.checked } })} /> Documents</label>
+                          <label className="flex items-center gap-2"><input type="checkbox" checked={a.fee_verified} onChange={(e) => setFlag.mutate({ id: a.id, patch: { fee_verified: e.target.checked } })} /> Fee (optional)</label>
+                        </TableCell>
                         <TableCell>{a.test_score ?? "—"}</TableCell>
                         <TableCell>
                           <Select value={a.stage} onValueChange={(v) => setStage.mutate({ id: a.id, stage: v })}>
