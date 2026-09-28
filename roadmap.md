@@ -1,8 +1,9 @@
 # Nypuna Connect roadmap
 
-- [x] Enable Lovable Cloud, email + Google auth
-- [ ] Read SRS PDF (NYPUNA_CONNECT_2.pdf) and align schema/modules with the 26 modules
-- [ ] Database migration (schema, roles, RLS, seeds) + storage bucket
-- [ ] Auth page, role-based app shell (Warm Slate theme)
-- [ ] Modules: SIS, Admissions, Academics, Timetable, Attendance, Assignments, Exams/Report cards, Library, Council voting, House points, Front office, Files, Staff/Roles, Announcements
-- [ ] Verify build + preview
+- [x] Cloud, auth, schema, roles, storage, theme, shell
+- [x] All module screens + staff, teacher tools, analytics, files, audit, timetable validation
+- [x] Council voting booth
+- [x] Sign-in history recording
+- [ ] Automatic activity log triggers (blocked: database offline)
+- [ ] Fees module (needs fee structure from user)
+- [ ] Signed-in end-to-end test of every role (blocked: database offline)

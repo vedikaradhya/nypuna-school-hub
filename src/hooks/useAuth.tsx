@@ -40,9 +40,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((e, s) => {
       setSession(s);
-      setTimeout(() => void load(s?.user?.id), 0);
+      setTimeout(() => {
+        void load(s?.user?.id);
+        if (e === "SIGNED_IN" && s?.user) {
+          const key = `nc-login-${s.user.id}-${s.access_token.slice(-12)}`;
+          if (!sessionStorage.getItem(key)) {
+            sessionStorage.setItem(key, "1");
+            const ua = navigator.userAgent;
+            void supabase.from("login_history").insert({
+              user_id: s.user.id, user_agent: ua.slice(0, 500),
+              device: /Mobi|Android/i.test(ua) ? "mobile" : "desktop",
+            });
+          }
+        }
+      }, 0);
     });
     void supabase.auth.getSession().then(async ({ data }) => {
       setSession(data.session);
