@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { StudentProfile, type StudentRow as StudentRowT } from "@/components/StudentProfile";
 
 export const Route = createFileRoute("/_authenticated/students")({
   head: () => ({
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/_authenticated/students")({
   component: Students,
 });
 
-type Row = {
+type Row = StudentRowT & {
   id: string; admission_no: string; first_name: string; last_name: string; roll_no: number | null;
   status: string; gender: string | null; date_of_birth: string | null; guardian_name: string | null;
   guardian_phone: string | null; guardian_email: string | null; address: string | null; blood_group: string | null;
@@ -98,35 +99,9 @@ function Students() {
       </Card>
 
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
           <DialogHeader><DialogTitle className="font-display">{selected?.first_name} {selected?.last_name}</DialogTitle></DialogHeader>
-          {selected ? (
-            <dl className="grid grid-cols-2 gap-3 text-sm">
-              {[
-                ["Admission no", selected.admission_no],
-                ["Class", selected.sections ? `${selected.sections.grades?.name ?? ""} ${selected.sections.name}` : "—"],
-                ["Roll no", selected.roll_no ?? "—"],
-                ["House", selected.houses?.name ?? "—"],
-                ["Date of birth", selected.date_of_birth ?? "—"],
-                ["Gender", selected.gender ?? "—"],
-                ["Guardian", selected.guardian_name ?? "—"],
-                ["Guardian phone", selected.guardian_phone ?? "—"],
-                ["Guardian email", selected.guardian_email ?? "—"],
-                ["Blood group", selected.blood_group ?? "—"],
-                ["Allergies", selected.allergies ?? "None recorded"],
-                ["Admitted on", selected.admitted_on],
-              ].map(([k, v]) => (
-                <div key={String(k)}>
-                  <dt className="text-xs uppercase tracking-wide text-muted-foreground">{k}</dt>
-                  <dd className="font-medium">{String(v)}</dd>
-                </div>
-              ))}
-              <div className="col-span-2">
-                <dt className="text-xs uppercase tracking-wide text-muted-foreground">Address</dt>
-                <dd>{selected.address ?? "—"}</dd>
-              </div>
-            </dl>
-          ) : null}
+          {selected ? <StudentProfile s={selected} /> : null}
         </DialogContent>
       </Dialog>
     </Page>
