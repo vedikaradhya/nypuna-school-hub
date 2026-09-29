@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { StudentProfile } from "@/components/StudentProfile";
+import { StudentProfile, type StudentRow as StudentRowT } from "@/components/StudentProfile";
 
 export const Route = createFileRoute("/_authenticated/students")({
   head: () => ({
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/_authenticated/students")({
   component: Students,
 });
 
-type Row = {
+type Row = StudentRowT & {
   id: string; admission_no: string; first_name: string; last_name: string; roll_no: number | null;
   status: string; gender: string | null; date_of_birth: string | null; guardian_name: string | null;
   guardian_phone: string | null; guardian_email: string | null; address: string | null; blood_group: string | null;
