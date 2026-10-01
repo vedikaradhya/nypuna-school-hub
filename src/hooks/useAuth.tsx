@@ -4,13 +4,18 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type AppRole = "administrator" | "principal" | "teacher" | "front_office" | "librarian";
 
-type Profile = { id: string; full_name: string; email: string | null; designation: string | null };
+type Profile = { id: string; full_name: string; email: string | null; designation: string | null; active_school_id: string | null };
+export type Membership = { id: string; school_id: string; status: string; requested_role: AppRole; schools: { name: string } | null };
 
 type AuthValue = {
   session: Session | null;
   user: User | null;
   profile: Profile | null;
   roles: AppRole[];
+  isOwner: boolean;
+  memberships: Membership[];
+  activeSchoolId: string | null;
+  activeSchoolName: string | null;
   loading: boolean;
   hasRole: (r: AppRole) => boolean;
   hasAnyRole: (r: AppRole[]) => boolean;
@@ -23,20 +28,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [isOwner, setIsOwner] = useState(false);
+  const [memberships, setMemberships] = useState<Membership[]>([]);
   const [loading, setLoading] = useState(true);
 
   const load = async (uid: string | undefined) => {
     if (!uid) {
-      setRoles([]);
-      setProfile(null);
+      setRoles([]); setProfile(null); setIsOwner(false); setMemberships([]);
       return;
     }
-    const [{ data: roleRows }, { data: prof }] = await Promise.all([
-      supabase.from("user_roles").select("role").eq("user_id", uid),
-      supabase.from("profiles").select("id, full_name, email, designation").eq("id", uid).maybeSingle(),
+    const [{ data: prof }, { data: owner }, { data: mems }] = await Promise.all([
+      supabase.from("profiles").select("id, full_name, email, designation, active_school_id").eq("id", uid).maybeSingle(),
+      supabase.rpc("is_owner"),
+      supabase.from("school_memberships").select("id, school_id, status, requested_role, schools(name)").eq("user_id", uid),
     ]);
-    setRoles(((roleRows ?? []) as { role: AppRole }[]).map((r) => r.role));
-    setProfile((prof as Profile) ?? null);
+    const p = (prof as Profile) ?? null;
+    const ms = (mems ?? []) as unknown as Membership[];
+    const active = p?.active_school_id && ms.some((m) => m.school_id === p.active_school_id && m.status === "approved") ? p.active_school_id : null;
+    let rs: AppRole[] = [];
+    if (active) {
+      const { data: roleRows } = await supabase.from("user_roles").select("role").eq("user_id", uid).eq("school_id", active);
+      rs = ((roleRows ?? []) as { role: AppRole }[]).map((r) => r.role);
+    }
+    setProfile(p ? { ...p, active_school_id: active } : null);
+    setIsOwner(!!owner);
+    setMemberships(ms);
+    setRoles(rs);
   };
 
   useEffect(() => {
@@ -65,11 +82,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => sub.subscription.unsubscribe();
   }, []);
 
+  const activeSchoolId = profile?.active_school_id ?? null;
   const value: AuthValue = {
     session,
     user: session?.user ?? null,
     profile,
     roles,
+    isOwner,
+    memberships,
+    activeSchoolId,
+    activeSchoolName: memberships.find((m) => m.school_id === activeSchoolId)?.schools?.name ?? null,
     loading,
     hasRole: (r) => roles.includes(r),
     hasAnyRole: (rs) => rs.some((r) => roles.includes(r)),
