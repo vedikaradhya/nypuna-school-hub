@@ -50,7 +50,7 @@ function AuthPage() {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error || !data.user) {
       setBusy(false);
-      return toast.error(error?.message ?? "Could not sign in");
+      return void toast.error(error?.message ?? "Could not sign in");
     }
     if (school) {
       const { data: m } = await supabase.from("school_memberships").select("status").eq("user_id", data.user.id).eq("school_id", school).maybeSingle();
@@ -64,7 +64,7 @@ function AuthPage() {
 
   const signUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!school) return toast.error("Choose your school first.");
+    if (!school) return void toast.error("Choose your school first.");
     setBusy(true);
     const { data, error } = await supabase.auth.signUp({
       email,

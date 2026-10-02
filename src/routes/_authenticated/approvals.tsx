@@ -54,7 +54,7 @@ function Approvals() {
 
   const review = async (r: Req, approve: boolean) => {
     const { error } = await supabase.rpc("review_membership", { _membership: r.id, _approve: approve, _roles: approve ? rolesFor(r) : [] });
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     toast.success(approve ? `${r.name} approved` : `${r.name} rejected`);
     void qc.invalidateQueries({ queryKey: ["approvals"] });
   };
