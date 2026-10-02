@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAcademicsRouteImport } from './routes/_authenticated/academics'
 import { Route as AuthenticatedAdmissionsRouteImport } from './routes/_authenticated/admissions'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
+import { Route as AuthenticatedApprovalsRouteImport } from './routes/_authenticated/approvals'
 import { Route as AuthenticatedAssignmentsRouteImport } from './routes/_authenticated/assignments'
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
@@ -26,6 +27,7 @@ import { Route as AuthenticatedFilesRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedHousesRouteImport } from './routes/_authenticated/houses'
 import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
 import { Route as AuthenticatedNoticesRouteImport } from './routes/_authenticated/notices'
+import { Route as AuthenticatedOwnerRouteImport } from './routes/_authenticated/owner'
 import { Route as AuthenticatedReportCardsRouteImport } from './routes/_authenticated/report-cards'
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedStudentsRouteImport } from './routes/_authenticated/students'
@@ -60,6 +62,11 @@ const AuthenticatedAdmissionsRoute = AuthenticatedAdmissionsRouteImport.update({
 const AuthenticatedAnalyticsRoute = AuthenticatedAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedApprovalsRoute = AuthenticatedApprovalsRouteImport.update({
+  id: '/approvals',
+  path: '/approvals',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAssignmentsRoute =
@@ -118,6 +125,11 @@ const AuthenticatedNoticesRoute = AuthenticatedNoticesRouteImport.update({
   path: '/notices',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedOwnerRoute = AuthenticatedOwnerRouteImport.update({
+  id: '/owner',
+  path: '/owner',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedReportCardsRoute =
   AuthenticatedReportCardsRouteImport.update({
     id: '/report-cards',
@@ -157,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/academics': typeof AuthenticatedAcademicsRoute
   '/admissions': typeof AuthenticatedAdmissionsRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
+  '/approvals': typeof AuthenticatedApprovalsRoute
   '/assignments': typeof AuthenticatedAssignmentsRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
   '/audit': typeof AuthenticatedAuditRoute
@@ -168,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/houses': typeof AuthenticatedHousesRoute
   '/library': typeof AuthenticatedLibraryRoute
   '/notices': typeof AuthenticatedNoticesRoute
+  '/owner': typeof AuthenticatedOwnerRoute
   '/report-cards': typeof AuthenticatedReportCardsRoute
   '/staff': typeof AuthenticatedStaffRoute
   '/students': typeof AuthenticatedStudentsRoute
@@ -181,6 +195,7 @@ export interface FileRoutesByTo {
   '/academics': typeof AuthenticatedAcademicsRoute
   '/admissions': typeof AuthenticatedAdmissionsRoute
   '/analytics': typeof AuthenticatedAnalyticsRoute
+  '/approvals': typeof AuthenticatedApprovalsRoute
   '/assignments': typeof AuthenticatedAssignmentsRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
   '/audit': typeof AuthenticatedAuditRoute
@@ -192,6 +207,7 @@ export interface FileRoutesByTo {
   '/houses': typeof AuthenticatedHousesRoute
   '/library': typeof AuthenticatedLibraryRoute
   '/notices': typeof AuthenticatedNoticesRoute
+  '/owner': typeof AuthenticatedOwnerRoute
   '/report-cards': typeof AuthenticatedReportCardsRoute
   '/staff': typeof AuthenticatedStaffRoute
   '/students': typeof AuthenticatedStudentsRoute
@@ -207,6 +223,7 @@ export interface FileRoutesById {
   '/_authenticated/academics': typeof AuthenticatedAcademicsRoute
   '/_authenticated/admissions': typeof AuthenticatedAdmissionsRoute
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRoute
+  '/_authenticated/approvals': typeof AuthenticatedApprovalsRoute
   '/_authenticated/assignments': typeof AuthenticatedAssignmentsRoute
   '/_authenticated/attendance': typeof AuthenticatedAttendanceRoute
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
@@ -218,6 +235,7 @@ export interface FileRoutesById {
   '/_authenticated/houses': typeof AuthenticatedHousesRoute
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
   '/_authenticated/notices': typeof AuthenticatedNoticesRoute
+  '/_authenticated/owner': typeof AuthenticatedOwnerRoute
   '/_authenticated/report-cards': typeof AuthenticatedReportCardsRoute
   '/_authenticated/staff': typeof AuthenticatedStaffRoute
   '/_authenticated/students': typeof AuthenticatedStudentsRoute
@@ -233,6 +251,7 @@ export interface FileRouteTypes {
     | '/academics'
     | '/admissions'
     | '/analytics'
+    | '/approvals'
     | '/assignments'
     | '/attendance'
     | '/audit'
@@ -244,6 +263,7 @@ export interface FileRouteTypes {
     | '/houses'
     | '/library'
     | '/notices'
+    | '/owner'
     | '/report-cards'
     | '/staff'
     | '/students'
@@ -257,6 +277,7 @@ export interface FileRouteTypes {
     | '/academics'
     | '/admissions'
     | '/analytics'
+    | '/approvals'
     | '/assignments'
     | '/attendance'
     | '/audit'
@@ -268,6 +289,7 @@ export interface FileRouteTypes {
     | '/houses'
     | '/library'
     | '/notices'
+    | '/owner'
     | '/report-cards'
     | '/staff'
     | '/students'
@@ -282,6 +304,7 @@ export interface FileRouteTypes {
     | '/_authenticated/academics'
     | '/_authenticated/admissions'
     | '/_authenticated/analytics'
+    | '/_authenticated/approvals'
     | '/_authenticated/assignments'
     | '/_authenticated/attendance'
     | '/_authenticated/audit'
@@ -293,6 +316,7 @@ export interface FileRouteTypes {
     | '/_authenticated/houses'
     | '/_authenticated/library'
     | '/_authenticated/notices'
+    | '/_authenticated/owner'
     | '/_authenticated/report-cards'
     | '/_authenticated/staff'
     | '/_authenticated/students'
@@ -349,6 +373,13 @@ declare module '@tanstack/react-router' {
       path: '/analytics'
       fullPath: '/analytics'
       preLoaderRoute: typeof AuthenticatedAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/approvals': {
+      id: '/_authenticated/approvals'
+      path: '/approvals'
+      fullPath: '/approvals'
+      preLoaderRoute: typeof AuthenticatedApprovalsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/assignments': {
@@ -428,6 +459,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedNoticesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/owner': {
+      id: '/_authenticated/owner'
+      path: '/owner'
+      fullPath: '/owner'
+      preLoaderRoute: typeof AuthenticatedOwnerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/report-cards': {
       id: '/_authenticated/report-cards'
       path: '/report-cards'
@@ -477,6 +515,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAcademicsRoute: typeof AuthenticatedAcademicsRoute
   AuthenticatedAdmissionsRoute: typeof AuthenticatedAdmissionsRoute
   AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRoute
+  AuthenticatedApprovalsRoute: typeof AuthenticatedApprovalsRoute
   AuthenticatedAssignmentsRoute: typeof AuthenticatedAssignmentsRoute
   AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRoute
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
@@ -488,6 +527,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHousesRoute: typeof AuthenticatedHousesRoute
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
   AuthenticatedNoticesRoute: typeof AuthenticatedNoticesRoute
+  AuthenticatedOwnerRoute: typeof AuthenticatedOwnerRoute
   AuthenticatedReportCardsRoute: typeof AuthenticatedReportCardsRoute
   AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
   AuthenticatedStudentsRoute: typeof AuthenticatedStudentsRoute
@@ -500,6 +540,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAcademicsRoute: AuthenticatedAcademicsRoute,
   AuthenticatedAdmissionsRoute: AuthenticatedAdmissionsRoute,
   AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRoute,
+  AuthenticatedApprovalsRoute: AuthenticatedApprovalsRoute,
   AuthenticatedAssignmentsRoute: AuthenticatedAssignmentsRoute,
   AuthenticatedAttendanceRoute: AuthenticatedAttendanceRoute,
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
@@ -511,6 +552,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHousesRoute: AuthenticatedHousesRoute,
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
   AuthenticatedNoticesRoute: AuthenticatedNoticesRoute,
+  AuthenticatedOwnerRoute: AuthenticatedOwnerRoute,
   AuthenticatedReportCardsRoute: AuthenticatedReportCardsRoute,
   AuthenticatedStaffRoute: AuthenticatedStaffRoute,
   AuthenticatedStudentsRoute: AuthenticatedStudentsRoute,
