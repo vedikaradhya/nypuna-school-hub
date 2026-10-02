@@ -56,16 +56,25 @@ export function AppShell({ title, subtitle, actions, children }: {
   actions?: ReactNode;
   children: ReactNode;
 }) {
-  const { profile, roles, user } = useAuth();
+  const { profile, roles, user, isOwner, memberships, activeSchoolId, refresh } = useAuth();
   const router = useRouter();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+  const approved = memberships.filter((m) => m.status === "approved");
 
   const signOut = async () => {
     await qc.cancelQueries();
     qc.clear();
     await supabase.auth.signOut();
     router.navigate({ to: "/auth", replace: true });
+  };
+
+  const switchSchool = async (id: string) => {
+    const { error } = await supabase.rpc("set_active_school", { _school: id });
+    if (error) return;
+    await qc.cancelQueries();
+    qc.clear();
+    await refresh();
   };
 
   const sidebar = (
@@ -77,12 +86,33 @@ export function AppShell({ title, subtitle, actions, children }: {
           <p className="text-[11px] text-sidebar-foreground/60">CBSE School Suite</p>
         </div>
       </div>
+      {approved.length ? (
+        <div className="border-b border-sidebar-border px-3 py-3">
+          <p className="px-1 pb-1 text-[11px] font-semibold uppercase tracking-widest text-sidebar-foreground/50">School</p>
+          <select
+            aria-label="Switch school"
+            className="w-full rounded-md border border-sidebar-border bg-sidebar px-2 py-1.5 text-sm text-sidebar-foreground"
+            value={activeSchoolId ?? ""}
+            onChange={(e) => void switchSchool(e.target.value)}
+          >
+            {!activeSchoolId ? <option value="">Select school</option> : null}
+            {approved.map((m) => <option key={m.id} value={m.school_id}>{m.schools?.name}</option>)}
+          </select>
+        </div>
+      ) : null}
       <div className="flex-1 overflow-y-auto">
+        {isOwner ? (
+          <div className="px-3 pt-4">
+            <Link to="/owner" onClick={() => setOpen(false)} className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-sidebar-foreground/90 hover:bg-sidebar-accent">
+              <Icons.Building2 className="size-4" /> Owner: Schools
+            </Link>
+          </div>
+        ) : null}
         <NavLinks onNavigate={() => setOpen(false)} />
       </div>
       <div className="border-t border-sidebar-border p-3 text-xs">
         <p className="truncate font-medium">{profile?.full_name ?? user?.email}</p>
-        <p className="truncate text-sidebar-foreground/60">{roles.map((r) => r.replace("_", " ")).join(", ") || "no role"}</p>
+        <p className="truncate text-sidebar-foreground/60">{[isOwner ? "owner" : null, ...roles.map((r) => r.replace("_", " "))].filter(Boolean).join(", ") || "awaiting approval"}</p>
         <Button variant="ghost" size="sm" className="mt-2 w-full justify-start text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" onClick={signOut}>
           <Icons.LogOut className="size-4" /> Sign out
         </Button>
