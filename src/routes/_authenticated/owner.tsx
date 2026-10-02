@@ -58,7 +58,7 @@ function Owner() {
   const addSchool = async (e: React.FormEvent) => {
     e.preventDefault();
     const { error } = await supabase.from("schools").insert({ name: name.trim(), code: code.trim().toUpperCase(), address: address.trim() || null });
-    if (error) return toast.error(error.message.includes("duplicate") ? "That school code is already used." : error.message);
+    if (error) return void toast.error(error.message.includes("duplicate") ? "That school code is already used." : error.message);
     toast.success("School added with default classes, periods, houses and subjects.");
     setName(""); setCode(""); setAddress("");
     void qc.invalidateQueries({ queryKey: ["owner-schools"] });
@@ -67,7 +67,7 @@ function Owner() {
   const setActive = async (s: School, active: boolean) => {
     if (!active && !confirm(`Remove ${s.name}? Staff will no longer be able to choose it. Its records are kept and it can be restored.`)) return;
     const { error } = await supabase.from("schools").update({ is_active: active }).eq("id", s.id);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     void qc.invalidateQueries({ queryKey: ["owner-schools"] });
   };
 

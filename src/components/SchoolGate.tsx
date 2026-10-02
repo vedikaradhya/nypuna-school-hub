@@ -37,14 +37,14 @@ export function SchoolGate() {
   const request = async () => {
     if (!school || !user) return;
     const { error } = await supabase.from("school_memberships").insert({ user_id: user.id, school_id: school, requested_role: role, status: "pending" });
-    if (error) return toast.error(error.message.includes("duplicate") ? "You already asked to join this school." : error.message);
+    if (error) return void toast.error(error.message.includes("duplicate") ? "You already asked to join this school." : error.message);
     toast.success("Request sent. The school administrator will review it.");
     await refresh();
   };
 
   const open = async (id: string) => {
     const { error } = await supabase.rpc("set_active_school", { _school: id });
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     await refresh();
   };
 
