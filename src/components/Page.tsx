@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/AppShell";
+import { SchoolGate } from "@/components/SchoolGate";
 import { useAuth } from "@/hooks/useAuth";
 import { ROUTE_ROLES } from "@/lib/nav";
 
@@ -10,19 +11,17 @@ export function Page({ path, title, subtitle, actions, children }: {
   actions?: ReactNode;
   children: ReactNode;
 }) {
-  const { hasAnyRole, loading, roles } = useAuth();
+  const { hasAnyRole, loading, roles, activeSchoolId } = useAuth();
   const allowed = ROUTE_ROLES[path] ?? [];
   const ok = hasAnyRole(allowed);
 
   return (
     <AppShell title={title} {...(subtitle ? { subtitle } : {})} {...(actions ? { actions } : {})}>
-      {loading ? null : ok ? children : (
+      {loading ? null : !activeSchoolId || !roles.length ? <SchoolGate /> : ok ? children : (
         <div className="rounded-lg border border-dashed p-10 text-center">
           <h2 className="font-display text-lg font-semibold">Not available for your role</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            {roles.length
-              ? `This section is limited to: ${allowed.map((r) => r.replace("_", " ")).join(", ")}.`
-              : "Your account has no role yet. Ask an administrator to assign one."}
+            This section is limited to: {allowed.map((r) => r.replace("_", " ")).join(", ")}.
           </p>
         </div>
       )}

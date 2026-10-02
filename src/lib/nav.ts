@@ -48,7 +48,10 @@ export const NAV: { group: string; items: NavItem[] }[] = [
   },
   {
     group: "System",
-    items: [{ to: "/audit", label: "Audit & Security", icon: "ShieldCheck", roles: ["administrator"] }],
+    items: [
+      { to: "/approvals", label: "Staff Approvals", icon: "UserCheck", roles: ["administrator"] },
+      { to: "/audit", label: "Audit & Security", icon: "ShieldCheck", roles: ["administrator"] },
+    ],
   },
 ];
 

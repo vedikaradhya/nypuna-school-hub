@@ -19,6 +19,8 @@ export const createStaffMember = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: isAdmin, error: roleErr } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "administrator" });
     if (roleErr || !isAdmin) throw new Error("Only administrators can add staff.");
+    const { data: schoolId } = await context.supabase.rpc("current_school_id");
+    if (!schoolId) throw new Error("No active school selected.");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
@@ -30,13 +32,17 @@ export const createStaffMember = createServerFn({ method: "POST" })
 
     await supabaseAdmin.from("profiles").upsert({
       id: uid, full_name: data.full_name, email: data.email,
-      designation: data.designation ?? null, phone: data.phone ?? null,
+      designation: data.designation ?? null, phone: data.phone ?? null, active_school_id: schoolId,
     });
-    await supabaseAdmin.from("user_roles").delete().eq("user_id", uid);
-    const { error: rErr } = await supabaseAdmin.from("user_roles").insert(data.roles.map((role) => ({ user_id: uid, role })));
+    await supabaseAdmin.from("school_memberships").upsert(
+      { user_id: uid, school_id: schoolId, status: "approved", requested_role: data.roles[0]!, reviewed_by: context.userId },
+      { onConflict: "user_id,school_id" },
+    );
+    await supabaseAdmin.from("user_roles").delete().eq("user_id", uid).eq("school_id", schoolId);
+    const { error: rErr } = await supabaseAdmin.from("user_roles").insert(data.roles.map((role) => ({ user_id: uid, role, school_id: schoolId })));
     if (rErr) throw new Error(rErr.message);
     await supabaseAdmin.from("audit_logs").insert({
-      user_id: context.userId, action: "staff.create", entity_type: "profiles", entity_id: uid,
+      user_id: context.userId, school_id: schoolId, action: "staff.create", entity_type: "profiles", entity_id: uid,
       details: { email: data.email, roles: data.roles },
     });
     return { id: uid };
