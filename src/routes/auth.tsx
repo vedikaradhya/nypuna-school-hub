@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useSchools, REQUESTABLE_ROLES } from "@/components/SchoolGate";
+import type { AppRole } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -27,6 +30,9 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [school, setSchool] = useState("");
+  const [role, setRole] = useState<AppRole>("teacher");
+  const schools = useSchools();
 
   useEffect(() => {
     void supabase.auth.getSession().then(({ data }) => {
@@ -41,26 +47,47 @@ function AuthPage() {
   const signIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error || !data.user) {
+      setBusy(false);
+      return toast.error(error?.message ?? "Could not sign in");
+    }
+    if (school) {
+      const { data: m } = await supabase.from("school_memberships").select("status").eq("user_id", data.user.id).eq("school_id", school).maybeSingle();
+      if (m?.status === "approved") await supabase.rpc("set_active_school", { _school: school });
+      else if (!m) await supabase.from("school_memberships").insert({ user_id: data.user.id, school_id: school, requested_role: role, status: "pending" });
+      if (m?.status !== "approved") toast.info("You're waiting for this school's administrator to approve you.");
+    }
     setBusy(false);
-    if (error) toast.error(error.message);
+    navigate({ to: "/dashboard", replace: true });
   };
 
   const signUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!school) return toast.error("Choose your school first.");
     setBusy(true);
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: window.location.origin, data: { full_name: fullName } },
+      options: { emailRedirectTo: window.location.origin, data: { full_name: fullName, school_id: school, requested_role: role } },
     });
     setBusy(false);
     if (error) {
       toast.error(error.message);
       return;
     }
-    if (!data.session) toast.success("Account created. Check your email to confirm, then sign in.");
+    if (!data.session) toast.success("Account created. Confirm your email, then sign in. Your school administrator must approve you.");
   };
+
+  const schoolPicker = (
+    <div className="space-y-1.5">
+      <Label>School</Label>
+      <Select value={school} onValueChange={setSchool}>
+        <SelectTrigger><SelectValue placeholder="Select your school" /></SelectTrigger>
+        <SelectContent>{schools.data?.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
+      </Select>
+    </div>
+  );
 
   const google = async () => {
     const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
@@ -102,6 +129,7 @@ function AuthPage() {
               </TabsList>
               <TabsContent value="signin">
                 <form className="space-y-3" onSubmit={signIn}>
+                  {schoolPicker}
                   <div className="space-y-1.5">
                     <Label htmlFor="email">Email</Label>
                     <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -115,6 +143,14 @@ function AuthPage() {
               </TabsContent>
               <TabsContent value="signup">
                 <form className="space-y-3" onSubmit={signUp}>
+                  {schoolPicker}
+                  <div className="space-y-1.5">
+                    <Label>I work as</Label>
+                    <Select value={role} onValueChange={(v) => setRole(v as AppRole)}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>{REQUESTABLE_ROLES.map((r) => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="name">Full name</Label>
                     <Input id="name" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
@@ -129,7 +165,7 @@ function AuthPage() {
                   </div>
                   <Button type="submit" className="w-full" disabled={busy}>Create staff account</Button>
                   <p className="text-[11px] text-muted-foreground">
-                    The first account created becomes the school Administrator. Later accounts are assigned a role by an administrator.
+                    Your school's administrator must approve you before you can use the app.
                   </p>
                 </form>
               </TabsContent>
