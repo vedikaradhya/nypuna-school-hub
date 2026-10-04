@@ -125,6 +125,17 @@ export function AppShell({ title, subtitle, actions, children }: {
       <aside className="hidden w-64 shrink-0 lg:block">{sidebar}</aside>
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-20 flex items-center gap-3 border-b bg-background/95 px-4 py-3 backdrop-blur sm:px-6">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Go back"
+            onClick={() => {
+              if (window.history.length > 1) router.history.back();
+              else router.navigate({ to: "/dashboard" });
+            }}
+          >
+            <Icons.ArrowLeft className="size-5" />
+          </Button>
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="lg:hidden">
