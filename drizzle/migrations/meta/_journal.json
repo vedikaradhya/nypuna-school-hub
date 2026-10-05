@@ -15,6 +15,13 @@
       "when": 1790846609126,
       "tag": "0001_multi_school_tenancy",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791216440683,
+      "tag": "0002_fix_log_audit_uuid",
+      "breakpoints": true
     }
   ]
 }
